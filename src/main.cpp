@@ -77,6 +77,7 @@ void setup() {
 void strategy_task(void* parameter) {
     // small delay to allow system to fully initialize
     vTaskDelay(pdMS_TO_TICKS(2000));
+    float distance = 1.2;
 
     // Wait for right limit switch to be consistently HIGH (debounce)
     const int DEBOUNCE_COUNT = 50;
@@ -99,11 +100,11 @@ void strategy_task(void* parameter) {
     }
 
     Serial.println("debug [main] Strategy: right limit confirmed, executing moves");
-    Serial.println("debug [main] Strategy: moving forward 0.5m");
-    motorController.moveDistance(0.5);
+    Serial.println("debug [main] Strategy: moving forward 1.2m");
+    motorController.moveDistance(1.2);
     vTaskDelay(pdMS_TO_TICKS(200));
-    Serial.println("debug [main] Strategy: moving backward 0.5m");
-    motorController.moveDistance(-0.5);
+    Serial.println("debug [main] Strategy: moving backward 1.0m");
+    motorController.moveDistance(-1.0);
     Serial.println("debug [main] Strategy: completed");
     vTaskDelete(NULL);
 }
