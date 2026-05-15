@@ -32,7 +32,7 @@ void process_serial_command() {
     if (Serial.available() > 0) {
         String command = Serial.readStringUntil('\n');
         command.trim();
-        Serial.print(command);
+        // Serial.print(command);
 
         if (command.length() > 0) {
             // If the line contains no spaces, allow numeric multiplier values like "0.6"

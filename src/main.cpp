@@ -99,16 +99,19 @@ void strategy_task(void* parameter) {
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 
-    Serial.println("debug [main] Strategy: right limit confirmed, executing moves");
+    // Serial.println("debug [main] Strategy: right limit confirmed, executing moves");
     // Serial.println("debug [main] Strategy: moving forward 1.2m");
-    // motorController.moveDistance(1.2);
+    // motorController.moveDistance(0.85);
     // vTaskDelay(pdMS_TO_TICKS(200));
     // Serial.println("debug [main] Strategy: moving backward 1.0m");
     // motorController.moveDistance(-1.0);
+    // Serial.println("debug [main] Strategy: completed");
+    // vTaskDelete(NULL);
 
     strategy1(motorController);
-    Serial.println("debug [main] Strategy: completed");
+    // task_distance(motorController, 0.9);
     vTaskDelete(NULL);
+    
 }
 
 
