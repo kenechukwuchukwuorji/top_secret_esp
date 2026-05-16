@@ -137,17 +137,95 @@ void MotorController::moveDistance(float distance)
     motorL.move(steps);
     motorR.move(steps);
 
+    unsigned long lastMoveTime = millis();
     // Always wait for completion
     while (motorL.isRunning() || motorR.isRunning())
     {
+        
+        if(std::isnan(motorL.speed())){
+            motorL.setSpeed(0);
+        }
+        if(std::isnan(motorR.speed())){
+            motorR.setSpeed(0);
+        }
+        
+        Serial.print("Current speed: ");
+        Serial.println(motorL.speed());
+        if(millis() - lastMoveTime > 500){
+            lastMoveTime = millis();
+            if((motorL.speed() == 0 || motorR.speed()==0) && speedMultiplier > 0.5){
+            Serial.println(speedMultiplier);
+            Serial.println("Broke out of loop");
+            break;
+            }
+        
+        }
         delay(10);
+        Serial.println("I am running");
+        // if(motorL.targetPosition() == motorL.currentPosition() || motorR.targetPosition() == motorR.currentPosition()){
+        //     break;
+        // }
+        
+
     }
+
+    motorL.stop();
+    motorR.stop();
 
     // restore max speeds
     motorL.setMaxSpeed(maxMotorSpeed);
     motorR.setMaxSpeed(maxMotorSpeed);
 
     switchToSpeedMode();
+
+//     switchToPositionMode();
+
+//     int steps = metersToSteps(distance);
+//     motorL.setMaxSpeed(maxMotorSpeed * speedMultiplier);
+//     motorR.setMaxSpeed(maxMotorSpeed * speedMultiplier);
+//     motorL.move(steps);
+//     motorR.move(steps);
+
+//     // --- TIMEOUT LOGIC START ---
+//     unsigned long lastMoveTime = millis();
+//     long lastPosL = motorL.currentPosition();
+    
+//     while (motorL.isRunning() || motorR.isRunning())
+//     {
+//         // Check if we are physically moving
+//         long currentPosL = motorL.currentPosition();
+        
+//         if (currentPosL != lastPosL) {
+//             lastPosL = currentPosL;
+//             lastMoveTime = millis(); // Reset timer because we are moving
+//         }
+
+//         // If we haven't moved a single step in 2 seconds...
+//         if (millis() - lastMoveTime > 2000) {
+//             // Check if we are "close enough" (e.g., within 5cm)
+//             float remainingDist = stepsToMeters(motorL.distanceToGo());
+//             if (abs(remainingDist) < 0.10) { 
+//                 Serial.println("debug [Motor] Obstacle blocking, but close enough. Finishing.");
+//                 break; 
+//             } else {
+//                 // If we are far away, we stay in this loop until the obstacle clears
+//                 // OR you can add a global 'strategy timeout' here.
+//                 Serial.println("debug [Motor] Waiting for obstacle...");
+//             }
+//         }
+        
+//         delay(10); 
+//     }
+//     // --- TIMEOUT LOGIC END ---
+
+//     // Force stop motors so they don't try to "jump" to the old target 
+//     // once we switch modes or the obstacle leaves.
+//     motorL.stop();
+//     motorR.stop();
+
+//     motorL.setMaxSpeed(maxMotorSpeed);
+//     motorR.setMaxSpeed(maxMotorSpeed);
+//     switchToSpeedMode();
 }
 
 void MotorController::rotate(float angle)
@@ -165,17 +243,107 @@ void MotorController::rotate(float angle)
     motorL.move(-steps);
     motorR.move(steps);
 
+
+    unsigned long lastMoveTime = millis();
     // Always wait for completion
     while (motorL.isRunning() || motorR.isRunning())
     {
+        if(std::isnan(motorL.speed())){
+            motorL.setSpeed(0);
+        }
+        if(std::isnan(motorR.speed())){
+            motorR.setSpeed(0);
+        }
+
+        Serial.print("Current speed: ");
+        Serial.println(motorL.speed());
+        if(millis() - lastMoveTime > 500){
+            lastMoveTime = millis();
+            if((motorL.speed() == 0 || motorR.speed()==0) && speedMultiplier > 0.5){
+            Serial.println(speedMultiplier);
+            Serial.println("Broke out of loop");
+            break;
+            }
+        
+        }
         delay(10);
+        Serial.println("I am running");
+        // if(motorL.targetPosition() == motorL.currentPosition() || motorR.targetPosition() == motorR.currentPosition()){
+        //     break;
+        // }
+       
+
+        
     }
+
+    motorL.stop();
+    motorR.stop();
 
     // restore max speeds
     motorL.setMaxSpeed(maxMotorSpeed);
     motorR.setMaxSpeed(maxMotorSpeed);
 
     switchToSpeedMode();
+
+
+
+
+
+    // switchToPositionMode();
+
+    // float arcLength = angle * trackWidth / 2.0;
+    // int steps = metersToSteps(arcLength);
+
+    // // scale max speed for this position move according to multiplier
+    // motorL.setMaxSpeed(maxMotorSpeed * speedMultiplier);
+    // motorR.setMaxSpeed(maxMotorSpeed * speedMultiplier);
+
+    // motorL.move(-steps);
+    // motorR.move(steps);
+
+    // // --- TIMEOUT LOGIC START ---
+    // unsigned long lastMoveTime = millis();
+    // long lastPosL = motorL.currentPosition();
+    
+    // while (motorL.isRunning() || motorR.isRunning())
+    // {
+    //     // Check if we are physically moving
+    //     long currentPosL = motorL.currentPosition();
+        
+    //     if (currentPosL != lastPosL) {
+    //         lastPosL = currentPosL;
+    //         lastMoveTime = millis(); // Reset timer because we are moving
+    //     }
+
+    //     // If we haven't moved a single step in 2 seconds...
+    //     if (millis() - lastMoveTime > 2000) {
+    //         // Check if we are "close enough" (e.g., within 5cm)
+    //         float remainingDist = stepsToMeters(motorL.distanceToGo());
+    //         if (abs(remainingDist) < 0.1) { 
+    //             Serial.println("debug [Motor] Obstacle blocking, but close enough. Finishing.");
+    //             break; 
+    //         } else {
+    //             // If we are far away, we stay in this loop until the obstacle clears
+    //             // OR you can add a global 'strategy timeout' here.
+    //             Serial.println("debug [Motor] Waiting for obstacle...");
+    //         }
+    //     }
+        
+    //     delay(10); 
+    // }
+    // // --- TIMEOUT LOGIC END ---
+
+    // // Force stop motors so they don't try to "jump" to the old target 
+    // // once we switch modes or the obstacle leaves.
+    // motorL.stop();
+    // motorR.stop();
+
+    // // restore max speeds
+    // motorL.setMaxSpeed(maxMotorSpeed);
+    // motorR.setMaxSpeed(maxMotorSpeed);
+
+    // switchToSpeedMode();
+
 }
 
 void MotorController::calibrateAgainstWall(CalibrationDirection direction, WallDirection wall, bool reverse)
@@ -426,6 +594,17 @@ void MotorController::updatePositionMode()
     // Call run() on both motors - returns true if motor stepped
     bool leftStep = motorL.run();
     bool rightStep = motorR.run();
+
+    // kaycee code
+    // if(millis() - this->currentTime_ > 200){
+    //     Serial.print("leftstep: ");
+    //     Serial.println(leftStep);
+    //     Serial.print("rightstep: ");
+    //     Serial.println(rightStep);
+    //     this->currentTime_ = millis();
+
+    // }
+
 
     // Update odometry if either motor stepped
     if (leftStep || rightStep)

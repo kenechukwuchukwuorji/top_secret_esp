@@ -66,6 +66,9 @@ private:
     
     // Calibration state
     bool calibrationInProgress;
+
+    //Kaycee code
+    unsigned long currentTime_ = millis();
     
 public:
     // Constructor & Destructor

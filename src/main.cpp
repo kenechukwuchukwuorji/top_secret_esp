@@ -9,10 +9,19 @@
 #include "servos_handler.h"
 #include "action_handler.h"
 #include "led_handler.h"
+#include "Strategy1.h"
+#include "Strategy2.h"
 
 // Global objects
 MotorController motorController;
 Odometry odometry;  // Make sure this is declared before serial_handler includes
+
+const int switchPin = 34; // The pin the switch is connected to
+int blue = 1;
+/*
+    if blue = -1 then we are yellow
+    if blue = 1 then we are blue
+*/
 
 // Forward declaration for the background strategy task
 void strategy_task(void* parameter);
@@ -60,6 +69,15 @@ void setup() {
     //     Serial.println(digitalRead(PIN_LIMIT_LEFT));
     // }
 
+    // pin switch
+    pinMode(switchPin, INPUT_PULLDOWN);
+    if (digitalRead(switchPin) == HIGH) {
+        blue = 1;
+    } else {
+        blue = -1;
+    }
+    
+
     // Start a background strategy task that moves forward 0.5m then back 0.5m
     xTaskCreate(
         strategy_task,   // task function
@@ -98,15 +116,25 @@ void strategy_task(void* parameter) {
         vTaskDelay(pdMS_TO_TICKS(10));
     }
 
-    Serial.println("debug [main] Strategy: right limit confirmed, executing moves");
-    Serial.println("debug [main] Strategy: moving forward 0.5m");
-    motorController.moveDistance(0.5);
-    vTaskDelay(pdMS_TO_TICKS(200));
-    Serial.println("debug [main] Strategy: moving backward 0.5m");
-    motorController.moveDistance(-0.5);
-    Serial.println("debug [main] Strategy: completed");
+    // Serial.println("debug [main] Strategy: right limit confirmed, executing moves");
+    // Serial.println("debug [main] Strategy: moving forward 1.2m");
+    // motorController.moveDistance(0.85);
+    // vTaskDelay(pdMS_TO_TICKS(200));
+    // Serial.println("debug [main] Strategy: moving backward 1.0m");
+    // motorController.moveDistance(-1.0);
+    // Serial.println("debug [main] Strategy: completed");
+    // vTaskDelete(NULL);
+
+    Serial.print("Team is set to: ");
+    Serial.println(blue);
+
+    // strategy1(motorController, blue);
+    strategy2(motorController, blue);
+    // task_distance(motorController, 0.9);
     vTaskDelete(NULL);
+    
 }
+
 
 
 void loop() {
