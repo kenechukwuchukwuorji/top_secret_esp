@@ -10,10 +10,18 @@
 #include "action_handler.h"
 #include "led_handler.h"
 #include "Strategy1.h"
+#include "Strategy2.h"
 
 // Global objects
 MotorController motorController;
 Odometry odometry;  // Make sure this is declared before serial_handler includes
+
+const int switchPin = 34; // The pin the switch is connected to
+int blue = 1;
+/*
+    if blue = -1 then we are yellow
+    if blue = 1 then we are blue
+*/
 
 // Forward declaration for the background strategy task
 void strategy_task(void* parameter);
@@ -60,6 +68,15 @@ void setup() {
     //     Serial.print(" | Limit Left: ");
     //     Serial.println(digitalRead(PIN_LIMIT_LEFT));
     // }
+
+    // pin switch
+    pinMode(switchPin, INPUT_PULLDOWN);
+    if (digitalRead(switchPin) == HIGH) {
+        blue = 1;
+    } else {
+        blue = -1;
+    }
+    
 
     // Start a background strategy task that moves forward 0.5m then back 0.5m
     xTaskCreate(
@@ -108,7 +125,11 @@ void strategy_task(void* parameter) {
     // Serial.println("debug [main] Strategy: completed");
     // vTaskDelete(NULL);
 
-    strategy1(motorController);
+    Serial.print("Team is set to: ");
+    Serial.println(blue);
+
+    // strategy1(motorController, blue);
+    strategy2(motorController, blue);
     // task_distance(motorController, 0.9);
     vTaskDelete(NULL);
     
